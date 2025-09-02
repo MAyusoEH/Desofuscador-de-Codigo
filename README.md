@@ -1,4 +1,4 @@
-## 🇪🇸 Spanish Tool
+## ![icon](https://cdn2.iconfinder.com/data/icons/flags_gosquared/64/Spain_flat.png) Spanish Tool
 
 ## Vista Previa de la herramienta HTML:
 ![Captura de pantalla del proyecto](https://github.com/MAyusoEH/Desofuscador-de-Codigo/blob/main/pic_obfusc.png)
