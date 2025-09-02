@@ -3,7 +3,7 @@
 
 
 ## Funcionamiento:
-Permite desofuscar código manualmente paso a paso seleccionando y aplicando diferentes filtros.
+Permite desofuscar código manualmente paso a paso seleccionando y aplicando diferentes filtros preestablecidos, y reemplazando cadenas de texto introducido manualmente.
 
 
 ## Cómo usar:
