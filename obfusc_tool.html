@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DESOFUSCADOR DEFINITIVO</title>
+  <style>
+    :root {
+      --primary-color: #B80F11;
+      --secondary-color: #CCCCCC;
+      --background-dark: #1A1A1A;
+      --text-dark: #FFFFFF;
+    }
+    body { font-family: Arial, sans-serif; background: var(--background-dark); color: var(--text-dark); margin: 0; padding: 8px; }
+    .container { max-width: 900px; margin: 0 auto; background: #2A2A2A; padding: 10px; border-radius: 5px; box-shadow: 0 0 8px rgba(0,0,0,0.5); }
+    h2 { color: var(--primary-color); margin: 3px 0 5px; font-size: 16px; text-align: center; }
+    .input-group { margin: 5px auto; width: 100%; max-width: 880px; display: flex; justify-content: center; }
+    textarea { width: 100%; height: 150px; background: #444444; border: 1px solid var(--secondary-color); color: var(--text-dark); padding: 6px; border-radius: 4px; font-family: 'Courier New', monospace; resize: vertical; }
+    #output { margin-top: 5px; background: #333333; }
+    .button-group { display: flex; justify-content: center; gap: 6px; }
+    button { background: var(--primary-color); border: none; padding: 6px 12px; color: var(--text-dark); cursor: pointer; border-radius: 3px; font-size: 11px; min-width: 120px; }
+    button.select-all, button.select-group { background: #FFFFFF; color: #000000; padding: 2px 5px; min-width: 80px; font-size: 8px; }
+    button:hover { background: #D81B1D; }
+    .label-group { display: flex; justify-content: center; margin: 4px 0; color: var(--text-dark); font-size: 11px; }
+    .options { display: flex; flex-direction: column; gap: 4px; margin: 4px 0; }
+    .filter-group { display: flex; flex-wrap: nowrap; gap: 4px; align-items: center; justify-content: center; }
+    .filter-group .option-box { flex: 1; min-width: 60px; max-width: 80px; height: 32px; display: flex; align-items: center; justify-content: center; }
+    .filter-group .button-column { display: flex; flex-direction: column; gap: 3px; min-width: 80px; align-items: flex-end; }
+    .option-box { display: flex; align-items: center; background: #333333; padding: 2px 4px; border-radius: 3px; border: 1px solid var(--secondary-color); }
+    .option-box label { margin: 0 3px; color: #E0E0E0; font-size: 8px; white-space: normal; line-height: 1.2; overflow: hidden; text-overflow: ellipsis; text-align: center; }
+    .text-box-container { flex: 1; min-width: 150px; max-width: 250px; height: 24px; display: flex; align-items: center; justify-content: center; }
+    .text-box { width: 100%; height: 100%; background: #444444; border: none; color: var(--text-dark); padding: 2px 6px; border-radius: 3px; font-size: 8px; font-family: 'Courier New', monospace; }
+    @media (max-width: 600px) {
+      body { padding: 6px; }
+      .container { padding: 8px; }
+      .input-group { max-width: 100%; }
+      textarea, #output { height: 120px; }
+      .options { gap: 3px; }
+      h2 { font-size: 14px; }
+      button { padding: 4px 8px; font-size: 10px; min-width: 100px; }
+      .filter-group { gap: 3px; }
+      .filter-group .option-box { min-width: 50px; max-width: 70px; height: 30px; }
+      .filter-group .button-column { min-width: 70px; }
+      .filter-group .button-column button { min-width: 70px; }
+      .option-box { padding: 1px 3px; }
+      .option-box label { font-size: 7px; line-height: 1.1; }
+      .text-box-container { min-width: 100px; max-width: 150px; height: 20px; }
+      .text-box { font-size: 7px; }
+      .label-group { font-size: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>↔️ DESOFUSCADOR DE CÓDIGO</h2>
+    <div class="input-group">
+      <textarea id="inputCode" placeholder="Pega aquí el código ofuscado..."></textarea>
+    </div>
+    <div class="button-group">
+      <button onclick="applyTransformers()">Decodificar Base64</button>
+      <button onclick="clearInput()">Limpiar input</button>
+    </div>
+    <div style="margin: 10px 0;"></div>
+    <div class="label-group">Seleccionar filtros:</div>
+    <div class="options">
+      <div class="filter-group">
+        <div class="option-box"><input type="checkbox" id="removeSingleQuotes"><label for="removeSingleQuotes">Eliminar '</label></div>
+        <div class="option-box"><input type="checkbox" id="removeBackticks"><label for="removeBackticks">Eliminar `</label></div>
+        <div class="option-box"><input type="checkbox" id="removeDoubleQuotes"><label for="removeDoubleQuotes">Eliminar "</label></div>
+        <div class="option-box"><input type="checkbox" id="removeCommas"><label for="removeCommas">Eliminar ,</label></div>
+        <div class="option-box"><input type="checkbox" id="removePeriods"><label for="removePeriods">Eliminar .</label></div>
+        <div class="option-box"><input type="checkbox" id="removeColons"><label for="removeColons">Eliminar :</label></div>
+        <div class="option-box"><input type="checkbox" id="removeSemicolons"><label for="removeSemicolons">Eliminar ;</label></div>
+        <div class="option-box"><input type="checkbox" id="removePlus"><label for="removePlus">Eliminar +</label></div>
+        <div class="button-column">
+          <button class="select-group" onclick="selectGroup(1)">Seleccionar grupo</button>
+          <button class="select-group" onclick="deselectGroup(1)">Deseleccionar grupo</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="option-box"><input type="checkbox" id="removeParentheses"><label for="removeParentheses">Eliminar ()</label></div>
+        <div class="option-box"><input type="checkbox" id="removeBrackets"><label for="removeBrackets">Eliminar []</label></div>
+        <div class="option-box"><input type="checkbox" id="removeBraces"><label for="removeBraces">Eliminar {}</label></div>
+        <div class="option-box"><input type="checkbox" id="removeAt"><label for="removeAt">Eliminar @</label></div>
+        <div class="option-box"><input type="checkbox" id="removePercent"><label for="removePercent">Eliminar %</label></div>
+        <div class="option-box"><input type="checkbox" id="removeAmpersand"><label for="removeAmpersand">Eliminar &</label></div>
+        <div class="option-box"><input type="checkbox" id="removeDollar"><label for="removeDollar">Eliminar $</label></div>
+        <div class="button-column">
+          <button class="select-group" onclick="selectGroup(2)">Seleccionar grupo</button>
+          <button class="select-group" onclick="deselectGroup(2)">Deseleccionar grupo</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="option-box"><input type="checkbox" id="removeRecursiveSpaces"><label for="removeRecursiveSpaces">Eliminar espacios recursivos</label></div>
+        <div class="option-box"><input type="checkbox" id="recoverHttp"><label for="recoverHttp">Recuperar http</label></div>
+        <div class="option-box"><input type="checkbox" id="recoverHttps"><label for="recoverHttps">Recuperar https</label></div>
+        <div class="option-box"><input type="checkbox" id="toLowerCase"><label for="toLowerCase">Mayúsculas a minúsculas</label></div>
+        <div class="option-box"><input type="checkbox" id="convertChar"><label for="convertChar">Convertir [char]</label></div>
+        <div class="option-box"><input type="checkbox" id="newlineAfterSemicolon"><label for="newlineAfterSemicolon">Salto de línea en ;</label></div>
+        <div class="button-column">
+          <button class="select-group" onclick="selectGroup(3)">Seleccionar grupo</button>
+          <button class="select-group" onclick="deselectGroup(3)">Deseleccionar grupo</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="option-box"><input type="checkbox" id="removeComments"><label for="removeComments">Eliminar comentarios <##></label></div>
+        <div class="option-box"><input type="checkbox" id="removeIex"><label for="removeIex">Eliminar iex</label></div>
+        <div class="option-box"><input type="checkbox" id="removeRecursiveX"><label for="removeRecursiveX">Eliminar x recursivas</label></div>
+        <div class="option-box"><input type="checkbox" id="removeBool"><label for="removeBool">Eliminar [bool]</label></div>
+        <div class="option-box"><input type="checkbox" id="removeNumericStrings"><label for="removeNumericStrings">Eliminar cadenas numéricas +5</label></div>
+        <div class="button-column">
+          <button class="select-group" onclick="selectGroup(4)">Seleccionar grupo</button>
+          <button class="select-group" onclick="deselectGroup(4)">Deseleccionar grupo</button>
+        </div>
+      </div>
+      <div class="filter-group">
+        <div class="text-box-container"><input type="text" id="replaceText" class="text-box" placeholder="Texto a reemplazar"></div>
+        <div class="text-box-container"><input type="text" id="newText" class="text-box" placeholder="Texto nuevo"></div>
+      </div>
+    </div>
+    <div class="button-group" style="margin-top: 12px;">
+      <button class="select-all" onclick="selectAll()">Seleccionar todos</button>
+      <button class="select-all" onclick="deselectAll()">Deseleccionar todos</button>
+      <button onclick="applyFilters()">Aplicar filtros seleccionados</button>
+    </div>
+    <div class="input-group">
+      <textarea id="output" readonly placeholder="Resultado desofuscado..."></textarea>
+    </div>
+    <div class="button-group">
+      <button onclick="clearOutput()">Limpiar Output</button>
+    </div>
+  </div>
+  <script>
+    const transformers = {
+      removeSingleQuotes: code => code.replace(/\'/g, ''),
+      removeBackticks: code => code.replace(/`/g, ''),
+      removePlus: code => code.replace(/\+/g, ''),
+      removeRecursiveSpaces: code => code.replace(/\s{3,}/g, ' '),
+      recoverHttp: code => code.replace(/3:\/\//g, 'http://'),
+      recoverHttps: code => code.replace(/3s:\/\//g, 'https://'),
+      toLowerCase: code => code.toLowerCase(),
+      removeParentheses: code => code.replace(/\(|\)/g, ''),
+      convertChar: code => code.replace(/\[char\]\s*\(?\d+\)?/g, (match, num) => {
+        const charCode = parseInt(num);
+        return isNaN(charCode) ? match : `'${String.fromCharCode(charCode)}'`;
+      }),
+      removeCommas: code => code.replace(/,/g, ''),
+      removePeriods: code => code.replace(/\./g, ''),
+      removeDoubleQuotes: code => code.replace(/"/g, ''),
+      removeDollar: code => code.replace(/\$/g, ''),
+      removeBraces: code => code.replace(/{|}/g, ''),
+      removeBrackets: code => code.replace(/\[|\]/g, ''),
+      removeColons: code => code.replace(/:/g, ''),
+      removeSemicolons: code => code.replace(/;/g, ''),
+      newlineAfterSemicolon: code => code.replace(/(?<=;)/g, '\n'),
+      removeAt: code => code.replace(/@/g, ''),
+      removePercent: code => code.replace(/%/g, ''),
+      removeAmpersand: code => code.replace(/&/g, ''),
+      removeComments: code => code.replace(/<\#[^#]*#>/g, ''),
+      removeIex: code => code.replace(/iex/g, ''),
+      removeRecursiveX: code => code.replace(/x{3,}/g, ''),
+      removeBool: code => code.replace(/!?\[bool\]/g, ''),
+      removeNumericStrings: code => code.replace(/\d{5,}/g, ''),
+      replaceCustomText: code => {
+        const replaceText = document.getElementById('replaceText').value.trim();
+        const newText = document.getElementById('newText').value;
+        if (replaceText) {
+          const escapedText = replaceText.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          return code.replace(new RegExp(escapedText, 'g'), newText);
+        }
+        return code;
+      },
+      decodeBase64: code => {
+        try {
+          return code
+            .replace(/atob\s*\(['"]([A-Za-z0-9+/=]+)['"]\)/g, (match, b64) => {
+              try { return `'${atob(b64).trim()}'`; } catch { return match; }
+            })
+            .replace(/[A-Za-z0-9+/=]{4,}/g, (match) => {
+              try { return atob(match).trim(); } catch { return match; }
+            });
+        } catch { return code; }
+      }
+    };
+    function clearInput() { document.getElementById('inputCode').value = ''; }
+    function clearOutput() { document.getElementById('output').value = ''; }
+    function selectAll() {
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = true);
+      document.getElementById('replaceText').value = '';
+      document.getElementById('newText').value = '';
+    }
+    function deselectAll() {
+      document.querySelectorAll('input[type="checkbox"]').forEach(cb => cb.checked = false);
+      document.getElementById('replaceText').value = '';
+      document.getElementById('newText').value = '';
+    }
+    function selectGroup(row) {
+      const groups = {
+        1: ['removeSingleQuotes', 'removeBackticks', 'removeDoubleQuotes', 'removeCommas', 'removePeriods', 'removeColons', 'removeSemicolons', 'removePlus'],
+        2: ['removeParentheses', 'removeBrackets', 'removeBraces', 'removeAt', 'removePercent', 'removeAmpersand', 'removeDollar'],
+        3: ['removeRecursiveSpaces', 'recoverHttp', 'recoverHttps', 'toLowerCase', 'convertChar', 'newlineAfterSemicolon'],
+        4: ['removeComments', 'removeIex', 'removeRecursiveX', 'removeBool', 'removeNumericStrings']
+      };
+      groups[row].forEach(id => document.getElementById(id).checked = true);
+    }
+    function deselectGroup(row) {
+      const groups = {
+        1: ['removeSingleQuotes', 'removeBackticks', 'removeDoubleQuotes', 'removeCommas', 'removePeriods', 'removeColons', 'removeSemicolons', 'removePlus'],
+        2: ['removeParentheses', 'removeBrackets', 'removeBraces', 'removeAt', 'removePercent', 'removeAmpersand', 'removeDollar'],
+        3: ['removeRecursiveSpaces', 'recoverHttp', 'recoverHttps', 'toLowerCase', 'convertChar', 'newlineAfterSemicolon'],
+        4: ['removeComments', 'removeIex', 'removeRecursiveX', 'removeBool', 'removeNumericStrings']
+      };
+      groups[row].forEach(id => document.getElementById(id).checked = false);
+    }
+    function applyTransformers() {
+      let code = document.getElementById('inputCode').value;
+      if (!code) return;
+      let output = transformers.decodeBase64(code);
+      document.getElementById('output').value = output;
+    }
+    function applyFilters() {
+      let code = document.getElementById('inputCode').value;
+      if (!code) return;
+      let output = code;
+      for (let id in transformers) {
+        if (id !== 'decodeBase64' && id !== 'replaceCustomText' && document.getElementById(id) && document.getElementById(id).checked) {
+          output = transformers[id](output);
+        }
+      }
+      output = transformers.replaceCustomText(output);
+      document.getElementById('output').value = output;
+    }
+  </script>
+</body>
+</html>
